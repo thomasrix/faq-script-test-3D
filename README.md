@@ -1,5 +1,5 @@
-# parceljs-boilerplate
-### Project boilerplate for small and midsize projects.
+# FAQ script test 3D
+### Checking threejs - mostly for fun
 
 Bundles with Parceljs both for development and deploy.
 Javascript (ES6) and css (SASS) bundled separately.
