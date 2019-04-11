@@ -1,7 +1,4 @@
-import Example from "./components/example";
-import '../styles/styles.scss';
-// import '../assets/**/*.*';
-// import '../styles/styles.scss';
+import RainbowBalls from "./components/rainbow-balls";
 
-console.log('Hello again Parcels', process.env.DEBUGGING);
-let ex = new Example();
+console.log('Hello 3D Parcels', process.env.DEBUGGING);
+let ex = new RainbowBalls();

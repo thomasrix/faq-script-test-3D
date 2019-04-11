@@ -18,11 +18,12 @@
   ],
   "devDependencies": {
     "autoprefixer": "^9.1.5",
-    "cssnano": "^4.1.0",
+    "cssnano": "^4.1.10",
     "fs-extra": "^7.0.0",
     "glob-watcher": "^5.0.1",
     "node-sass": "^4.9.3",
-    "parcel-bundler": "^1.10.3"
+    "parcel-bundler": "^1.12.3",
+    "three": "^0.103.0"
   },
   "dependencies": {}
 }
