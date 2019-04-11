@@ -23,6 +23,9 @@ export function selectAll (s, e = document){
     // Shortcut to select dom elements
     return e.querySelectorAll(s);
 }
+export function lerp (min, max, t) {
+    return min * (1 - t) + max * t;
+}
 export function addNodeListForEach(nodelist){
     if(window.NodeList && !NodeList.prototype.forEach){
         nodelist.forEach = function(callback, thisArg) {
