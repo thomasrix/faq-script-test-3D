@@ -1,0 +1,53 @@
+@font-face{
+	font-family:"gibsonLight";
+	src:url("https://www.dr.dk/assets/fonts/gibson/light/gibson-light-webfont.woff2") format("woff2"),
+	url("https://www.dr.dk/assets/fonts/gibson/light/gibson-light-webfont.woff") format("woff");
+	font-weight:normal;
+}
+@font-face{
+	font-family:"gibsonRegular";
+	src:url("https://www.dr.dk/assets/fonts/gibson/regular/gibson-regular-webfont.woff2") format("woff2"),
+	url("https://www.dr.dk/assets/fonts/gibson/regular/gibson-regular-webfont.woff") format("woff");
+	font-weight:normal;
+}
+@font-face{
+	font-family:"gibsonSemiBold";
+	src:url("https://www.dr.dk/assets/fonts/gibson/semiBold/gibson-semiBold-webfont.woff2") format("woff2"),
+	url("https://www.dr.dk/assets/fonts/gibson/semiBold/gibson-semiBold-webfont.woff") format("woff");
+	font-weight:normal;
+}
+@font-face{
+	font-family:"gibsonBold";
+	src:url("https://www.dr.dk/assets/fonts/gibson/bold/gibson-bold-webfont.woff2") format("woff2"),
+	url("https://www.dr.dk/assets/fonts/gibson/bold/gibson-bold-webfont.woff") format("woff");
+	font-weight:normal;
+}
+body {
+	padding: 0px;
+	margin: 0px;
+}
+.content{
+	width:400px;
+	.highlight{
+		color:rgb(69, 76, 139);
+		font-family: gibsonSemiBold;
+	}
+	.path-thing{
+		font-family: monospace;
+		color:grey;
+	}
+	img{
+		display:block;
+		width:25%;
+		margin:3em auto;
+	}
+}
+.debug-container{
+	margin-left:20px;
+	margin-top:20px;
+	padding:20px;
+	font-family: gibsonLight;
+	background: #eeeeee;
+	border: 1px solid #dddddd;
+
+}
