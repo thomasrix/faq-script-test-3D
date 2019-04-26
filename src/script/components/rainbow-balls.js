@@ -60,6 +60,7 @@ export default class RainbowBalls{
         // camera.position.y = 0;
         // Setup camera controller
         const controls = new THREE.OrbitControls(camera);
+        controls.enableZoom = false;
         
         // Setup your scene
         const scene = new THREE.Scene();
@@ -70,11 +71,12 @@ export default class RainbowBalls{
         const group = new THREE.Group();
         
         const points = this.createGrid();
+        
         points.forEach(({position, color}) => {
             const material = new THREE.MeshStandardMaterial({
                 color: color,
-                metalness:0.1,
-                roughness:0.4,
+                metalness:0.5,
+                roughness:0.1,
                 wireframe:false
             });
             const [u, v] = position;
@@ -90,7 +92,7 @@ export default class RainbowBalls{
                     0
                     );
                     group.add(mesh);
-        })
+                })
                 
                 scene.add(group);
                 // camera.lookAt(new THREE.Vector3(0, 0, 20));
@@ -99,11 +101,11 @@ export default class RainbowBalls{
                 // camera.updateProjectionMatrix();
                 
                 // Specify an ambient/unlit colour
-                scene.add(new THREE.AmbientLight('hsl(0, 0%, 70%)'));
-                let d_light = new THREE.PointLight( 0xffffff, 0.5, 20, 20);
+                scene.add(new THREE.AmbientLight('hsl(0, 0%, 90%)'));
+                let d_light = new THREE.PointLight( 0xffffcc, 1, 20, 20);
                 
                 d_light.castShadow = true;
-                d_light.position.set( 1, 5, 0 );
+                d_light.position.set( 10, 15, 7 );
                 
                 scene.add(d_light);
                 
