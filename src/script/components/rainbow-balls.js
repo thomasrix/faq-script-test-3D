@@ -8,33 +8,64 @@ require('three/examples/js/controls/OrbitControls');
 export default class RainbowBalls{
     constructor(){
         this.props = {
-            width:800,
-            height:450
+            gridSize:10,
+            size:{
+                horisontal:{
+                    xCount:10,
+                    yCount:4,
+                    width:800,
+                    height:450
+                },
+                vertical:{
+                    xCount:4,
+                    yCount:8,
+                    width:450,
+                    height:800
+                }
+            }
         }
         this.init(this.props);
     }
+    querySwitch(q){
+        // console.log('switch', q.matches);
+        console.log(this)
+        this.orientation = (q.matches) ? 'vertical' : 'horisontal';
+        this.setCanvasSize();
+    }
+    setCanvasSize(){
+        let {width, height} = this.props.size[this.orientation];
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+    }
     init(props){
-        let {width, height} = props;
         let container = select('[canvas-tester-entry-3d]');
-        let canvas = create('canvas', container, 'faq-ct-canvas');
-        canvas.width = width;
-        canvas.height = height;
-        props.context = canvas.getContext('webgl');
-        console.log(props);
+        this.canvas = create('canvas', container, 'faq-ct-canvas');
+        // this.setCanvasSize();
+        props.context = this.canvas.getContext('webgl');
+
+        this.query = window.matchMedia("(max-width: 500px)");
+        this.querySwitch(this.query);
+        // console.log(this.orientation);
+
+        this.query.addListener(this.querySwitch.bind(this));
+
+        // console.log(props);
         this.build(props);
     }
     createGrid(){
-        const count = 10;
+        //const count = 10;
+        let {xCount, yCount} = this.props.size[this.orientation];
         const points = [];
-        for (let y = 0 ; y < count/2 ; y++){
-            for (let x = 0 ; x < count; x++){
-                const u = x / (count - 1);
-                const v = y / (count/2 - 1);
+        for (let y = 0 ; y < yCount ; y++){
+            for (let x = 0 ; x < xCount; x++){
+                const u = x / (xCount - 1);
+                const v = y / (yCount - 1);
                 points.push({
                     position:[
                         u, v
                     ],
-                    radius:40,
+                    radius:25,
                     color:`hsl(${lerp(0, 360, u)}, 50%, 50%)`
                     // color:`hsl(${lerp(0, 360, u)}, ${lerp(10, 100, (v+u)/2)}%, ${lerp(20, 95, (v+u)/2)}%)`
                 })
@@ -43,14 +74,14 @@ export default class RainbowBalls{
         return points;
     }
     build(props){
-        let {width, height, context} = props;
-        let margin = width * 0.1;
+        let {context} = props;
+        let {width, height} = props.size[this.orientation];
         
         const renderer = new THREE.WebGLRenderer({
             context
         });
         // WebGL background color
-        renderer.setClearColor('hsl(0, 0%, 60%)', 0);
+        renderer.setClearColor('hsl(0, 0%, 60%)', 0.02);
         renderer.setSize(width, height);
         
         // Setup a camera
@@ -81,7 +112,8 @@ export default class RainbowBalls{
             });
             const [u, v] = position;
             const x = lerp(-6, 6, u);
-            const y = lerp(-3, 3, v);
+            const y = lerp(-2, 2, v);
+            // spacing aspect = smaller amount / larger amount * larger spacing
             const mesh = new THREE.Mesh(
                 sphere,
                 material
