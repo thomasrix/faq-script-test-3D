@@ -130,6 +130,15 @@ export default class RainbowBalls{
         // Setup your scene
         const scene = new THREE.Scene();
         
+        scene.add(new THREE.AmbientLight('hsl(0, 0%, 90%)'));
+        let d_light = new THREE.PointLight( 0xffffcc, 1, 0, 2);
+        
+        // d_light.castShadow = true;
+        d_light.position.set( 10, 15, 7 );
+        
+        scene.add(d_light);
+        console.log('adding light', d_light);
+        
         this.sphere = new THREE.SphereGeometry( 0.5, 32, 32 );
         
         this.group = new THREE.Group();
@@ -138,19 +147,13 @@ export default class RainbowBalls{
         this.populated = true;
         
         scene.add(this.group);
+        console.log('adding group')
         // camera.lookAt(new THREE.Vector3(0, 0, 20));
         
         // Update the camera
         // camera.updateProjectionMatrix();
         
         // Specify an ambient/unlit colour
-        scene.add(new THREE.AmbientLight('hsl(0, 0%, 90%)'));
-        let d_light = new THREE.PointLight( 0xffffcc, 1, 20, 20);
-        
-        d_light.castShadow = true;
-        d_light.position.set( 10, 15, 7 );
-        
-        scene.add(d_light);
         
         const render = ()=>{
             controls.update();
