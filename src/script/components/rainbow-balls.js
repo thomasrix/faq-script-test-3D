@@ -12,46 +12,70 @@ export default class RainbowBalls{
             size:{
                 horisontal:{
                     xCount:10,
-                    yCount:4,
+                    yCount:5,
                     width:800,
-                    height:450
+                    height:450,
+                    xRange:7.5,
+                    zoom:14
                 },
                 vertical:{
-                    xCount:4,
-                    yCount:8,
+                    xCount:5,
+                    yCount:9,
                     width:450,
-                    height:800
+                    height:800,
+                    xRange:2.75,
+                    zoom:18
                 }
             }
         }
         this.init(this.props);
     }
+    init(props){
+        let container = select('[canvas-tester-entry-3d]');
+        this.canvas = create('canvas', container, 'faq-ct-canvas');
+        props.context = this.canvas.getContext('webgl');
+        
+        this.query = window.matchMedia("(max-width: 500px)");
+        this.querySwitch(this.query);
+        
+        this.query.addListener(this.querySwitch.bind(this));
+        
+        this.build(props);
+    }
     querySwitch(q){
-        // console.log('switch', q.matches);
-        console.log(this)
         this.orientation = (q.matches) ? 'vertical' : 'horisontal';
         this.setCanvasSize();
+
     }
     setCanvasSize(){
         let {width, height} = this.props.size[this.orientation];
         this.canvas.width = width;
         this.canvas.height = height;
-
+        
     }
-    init(props){
-        let container = select('[canvas-tester-entry-3d]');
-        this.canvas = create('canvas', container, 'faq-ct-canvas');
-        // this.setCanvasSize();
-        props.context = this.canvas.getContext('webgl');
-
-        this.query = window.matchMedia("(max-width: 500px)");
-        this.querySwitch(this.query);
-        // console.log(this.orientation);
-
-        this.query.addListener(this.querySwitch.bind(this));
-
-        // console.log(props);
-        this.build(props);
+    populateGroup(points){
+        for (let i = this.group.children.length - 1; i >= 0; i--) {
+            this.group.remove(group.children[i]);
+        }
+        let {xCount, yCount, width, xRange} = this.props.size[this.orientation];
+        let yRange = (yCount - 1) / (xCount -1) * xRange;
+        // spacing aspect = smaller amount / larger amount * larger spacing
+        points.forEach(({position, color}) => {
+            const material = new THREE.MeshStandardMaterial({
+                color: color,
+                metalness:0.5,
+                roughness:0.1,
+                wireframe:false
+            }
+            );
+            const [u, v] = position;
+            const x = lerp(-xRange, xRange, u);
+            const y = lerp(-yRange, yRange, v);
+            const mesh = new THREE.Mesh(this.sphere, material);
+            mesh.position.set(x, y, 0);
+            this.group.add(mesh);
+        }
+        )
     }
     createGrid(){
         //const count = 10;
@@ -65,7 +89,6 @@ export default class RainbowBalls{
                     position:[
                         u, v
                     ],
-                    radius:25,
                     color:`hsl(${lerp(0, 360, u)}, 50%, 50%)`
                     // color:`hsl(${lerp(0, 360, u)}, ${lerp(10, 100, (v+u)/2)}%, ${lerp(20, 95, (v+u)/2)}%)`
                 })
@@ -75,7 +98,7 @@ export default class RainbowBalls{
     }
     build(props){
         let {context} = props;
-        let {width, height} = props.size[this.orientation];
+        let {width, height, zoom} = props.size[this.orientation];
         
         const renderer = new THREE.WebGLRenderer({
             context
@@ -86,80 +109,44 @@ export default class RainbowBalls{
         
         // Setup a camera
         // const camera = new THREE.OrthographicCamera();
-        const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-        camera.position.z = 12;
+        this.camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+        this.camera.position.z = zoom;
         // camera.position.y = 0;
         // Setup camera controller
-        const controls = new THREE.OrbitControls(camera);
+        const controls = new THREE.OrbitControls(this.camera);
         controls.enableZoom = false;
         
         // Setup your scene
         const scene = new THREE.Scene();
         
-        const box = new THREE.BoxGeometry(1, 1, 1);
-        const sphere = new THREE.SphereGeometry( 0.5, 32, 32 );
+        this.sphere = new THREE.SphereGeometry( 0.5, 32, 32 );
         
-        const group = new THREE.Group();
+        this.group = new THREE.Group();
         
         const points = this.createGrid();
+
+        this.populateGroup(points);
         
-        points.forEach(({position, color}) => {
-            const material = new THREE.MeshStandardMaterial({
-                color: color,
-                metalness:0.5,
-                roughness:0.1,
-                wireframe:false
-            });
-            const [u, v] = position;
-            const x = lerp(-6, 6, u);
-            const y = lerp(-2, 2, v);
-            // spacing aspect = smaller amount / larger amount * larger spacing
-            const mesh = new THREE.Mesh(
-                sphere,
-                material
-                );
-                mesh.position.set(
-                    x,
-                    y,
-                    0
-                    );
-                    group.add(mesh);
-                })
-                
-                scene.add(group);
-                // camera.lookAt(new THREE.Vector3(0, 0, 20));
-                
-                // Update the camera
-                // camera.updateProjectionMatrix();
-                
-                // Specify an ambient/unlit colour
-                scene.add(new THREE.AmbientLight('hsl(0, 0%, 90%)'));
-                let d_light = new THREE.PointLight( 0xffffcc, 1, 20, 20);
-                
-                d_light.castShadow = true;
-                d_light.position.set( 10, 15, 7 );
-                
-                scene.add(d_light);
-                
-                
-                /*         
-                let points = this.createGrid();
-                points.forEach(({position, radius, color}) =>{
-                    const [u, v] = position;
-                    const x = lerp(margin, width - margin, u);
-                    const y = lerp(margin, height-margin, v);
-                    context.fillStyle = color;
-                    context.beginPath();
-                    context.arc(x, y, radius, 0, Math.PI * 2);
-                    context.fill();
-                })
-                */    
-                const render = ()=>{
-                    //    console.log('render')
-                    controls.update();
-                    renderer.render(scene, camera);
-                    requestAnimationFrame(render);
-                }
-                render();
-            }
+        scene.add(this.group);
+        // camera.lookAt(new THREE.Vector3(0, 0, 20));
+        
+        // Update the camera
+        // camera.updateProjectionMatrix();
+        
+        // Specify an ambient/unlit colour
+        scene.add(new THREE.AmbientLight('hsl(0, 0%, 90%)'));
+        let d_light = new THREE.PointLight( 0xffffcc, 1, 20, 20);
+        
+        d_light.castShadow = true;
+        d_light.position.set( 10, 15, 7 );
+        
+        scene.add(d_light);
+        
+        const render = ()=>{
+            controls.update();
+            renderer.render(scene, this.camera);
+            requestAnimationFrame(render);
         }
+        render();
+    }
+}
