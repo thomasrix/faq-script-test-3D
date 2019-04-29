@@ -48,7 +48,7 @@ export default class RainbowBalls{
 
     }
     setCanvasSize(){
-        let {width, height} = this.props.size[this.orientation];
+        let {width, height, zoom} = this.props.size[this.orientation];
         this.canvas.width = width;
         this.canvas.height = height;
         if(this.populated){
@@ -57,6 +57,7 @@ export default class RainbowBalls{
             
             this.camera.aspect = width / height;
             this.camera.updateProjectionMatrix();
+            this.camera.position.z = zoom;
             this.renderer.setSize(width, height);
         }
         
@@ -114,7 +115,7 @@ export default class RainbowBalls{
             context
         });
         // WebGL background color
-        this.renderer.setClearColor('hsl(0, 0%, 60%)', 0.02);
+        this.renderer.setClearColor('hsl(0, 0%, 60%)', 0);
         this.renderer.setSize(width, height);
         
         // Setup a camera
@@ -133,9 +134,7 @@ export default class RainbowBalls{
         
         this.group = new THREE.Group();
         
-        const points = this.createGrid();
-
-        this.populateGroup(points);
+        this.populateGroup(this.createGrid());
         this.populated = true;
         
         scene.add(this.group);
