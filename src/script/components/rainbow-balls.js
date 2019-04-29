@@ -51,13 +51,23 @@ export default class RainbowBalls{
         let {width, height} = this.props.size[this.orientation];
         this.canvas.width = width;
         this.canvas.height = height;
+        if(this.populated){
+            this.emptyGroup();
+            this.populateGroup(this.createGrid());
+            
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(width, height);
+        }
         
     }
-    populateGroup(points){
+    emptyGroup(){
         for (let i = this.group.children.length - 1; i >= 0; i--) {
-            this.group.remove(group.children[i]);
+            this.group.remove(this.group.children[i]);
         }
-        let {xCount, yCount, width, xRange} = this.props.size[this.orientation];
+    }
+    populateGroup(points){
+        let {xCount, yCount, xRange} = this.props.size[this.orientation];
         let yRange = (yCount - 1) / (xCount -1) * xRange;
         // spacing aspect = smaller amount / larger amount * larger spacing
         points.forEach(({position, color}) => {
@@ -100,12 +110,12 @@ export default class RainbowBalls{
         let {context} = props;
         let {width, height, zoom} = props.size[this.orientation];
         
-        const renderer = new THREE.WebGLRenderer({
+        this.renderer = new THREE.WebGLRenderer({
             context
         });
         // WebGL background color
-        renderer.setClearColor('hsl(0, 0%, 60%)', 0.02);
-        renderer.setSize(width, height);
+        this.renderer.setClearColor('hsl(0, 0%, 60%)', 0.02);
+        this.renderer.setSize(width, height);
         
         // Setup a camera
         // const camera = new THREE.OrthographicCamera();
@@ -126,6 +136,7 @@ export default class RainbowBalls{
         const points = this.createGrid();
 
         this.populateGroup(points);
+        this.populated = true;
         
         scene.add(this.group);
         // camera.lookAt(new THREE.Vector3(0, 0, 20));
@@ -144,7 +155,7 @@ export default class RainbowBalls{
         
         const render = ()=>{
             controls.update();
-            renderer.render(scene, this.camera);
+            this.renderer.render(scene, this.camera);
             requestAnimationFrame(render);
         }
         render();
