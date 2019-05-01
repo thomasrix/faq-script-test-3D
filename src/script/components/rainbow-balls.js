@@ -126,6 +126,10 @@ export default class RainbowBalls{
         // Setup camera controller
         const controls = new THREE.OrbitControls(this.camera);
         controls.enableZoom = false;
+        controls.enableDamping = true;
+        controls.enablePan = false;
+        controls.maxPolarAngle = Math.PI * 0.5;
+        controls.minPolarAngle = Math.PI * 0.5;
         
         // Setup your scene
         const scene = new THREE.Scene();
